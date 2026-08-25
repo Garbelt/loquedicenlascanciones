@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sorteo de Canciones</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:10px;
+    font-family:Arial,sans-serif;
+    background:#f2f2f2;
+    text-align:center;
+}
+
+h1{
+    margin:10px 0;
+    color:#222;
+}
+
+
+/* ==========================
+   ZONA CENTRAL DEL SORTEO
+========================== */
+
+#zonaSorteo{
+
+    min-height:calc(100vh - 80px);
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    box-sizing:border-box;
+
+}
+
+/* ==========================
+   REEL
+========================== */
+
+.slot-container{
+
+    width:78%;
+    max-width:720px;
+
+    height:140px;
+
+    margin:0 auto 10px;
+
+    overflow:hidden;
+
+    border:5px solid #222;
+    border-radius:14px;
+
+    background:white;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.2);
+
+}
+
+.reel{
+    display:flex;
+    flex-direction:column;
+    will-change:transform;
+}
+
+.symbol{
+
+    height:140px;
+    min-height:140px;
+    flex:0 0 140px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:16px;
+    box-sizing:border-box;
+
+    font-size:32px;
+    font-weight:bold;
+
+    text-align:center;
+
+    line-height:1.1;
+
+}
+
+.symbol.win{
+
+    background:#fff5a5;
+
+    box-shadow:
+    inset 0 0 20px rgba(255,190,0,.45);
+
+}
+
+/* ==========================
+   AUTOR / RESULTADO
+========================== */
+
+#ganadora{
+
+    min-height:90px;
+
+    margin:20px auto;
+
+    font-size:40px;
+    font-weight:bold;
+
+    color:#d32f2f;
+
+    text-shadow:
+    2px 2px 5px rgba(0,0,0,.15);
+
+}
+
+/* ==========================
+   BOTONES
+========================== */
+
+button{
+
+    padding:12px 28px;
+
+    font-size:22px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#1976d2;
+    color:white;
+
+    cursor:pointer;
+
+}
+
+button:disabled{
+    opacity:.5;
+}
+
+/* ==========================
+   PANTALLA DE ANÁLISIS
+========================== */
+
+#pantallaAnalisis{
+
+    width:95%;
+    max-width:900px;
+
+    margin:20px auto;
+
+    box-sizing:border-box;
+
+}
+
+#autorCancion{
+
+    font-size:24px;
+
+    color:#555;
+
+    margin-top:5px;
+    margin-bottom:20px;
+
+}
+
+/* ==========================
+   CONTROL DE VOLUMEN
+========================== */
+
+#controlVolumen{
+
+    width:90%;
+    max-width:600px;
+
+    margin:20px auto;
+
+    padding:15px;
+
+    background:white;
+
+    border-radius:12px;
+
+    box-shadow:
+    0 3px 10px rgba(0,0,0,.15);
+
+    box-sizing:border-box;
+
+}
+
+#controlVolumen label{
+
+    display:block;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+
+}
+
+#volumenFondo{
+
+    width:70%;
+
+    vertical-align:middle;
+
+}
+
+#valorVolumen{
+
+    display:inline-block;
+
+    width:45px;
+
+    font-size:18px;
+    font-weight:bold;
+
+}
+
+#textoCancion{
+
+    width:95%;
+
+    margin:25px auto;
+
+    padding:20px;
+
+    box-sizing:border-box;
+
+    background:white;
+
+    border-radius:12px;
+
+    font-size:22px;
+
+    line-height:1.6;
+
+    text-align:center;
+
+    box-shadow:
+    0 3px 10px rgba(0,0,0,.12);
+
+}
+
+/* ==========================
+   BOTÓN VOLVER
+========================== */
+
+#btnVolver{
+
+    margin:20px auto 30px;
+
+    background:#555;
+
+}
+
+/* ==========================
+   HISTORIAL
+========================== */
+
+#historial{
+
+    width:98%;
+
+    margin:20px auto;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(6,1fr);
+
+    gap:6px;
+
+}
+
+.hist-item{
+
+    background:white;
+
+    border:1px solid #444;
+
+    border-radius:5px;
+
+    min-height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:5px;
+
+    font-size:12px;
+    font-weight:bold;
+
+    text-align:center;
+
+}
+
+@media(max-width:700px){
+
+    .symbol{
+        font-size:24px;
+    }
+
+    #ganadora{
+        font-size:32px;
+    }
+
+    #autorCancion{
+        font-size:20px;
+    }
+
+    #textoCancion{
+        font-size:19px;
+    }
+
+    #volumenFondo{
+        width:65%;
+    }
+
+    #historial{
+
+        grid-template-columns:
+        repeat(3,1fr);
+
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1 id="tituloPagina">🎵 SORTEO DE CANCIONES</h1>
+
+<!-- ==========================
+     PANTALLA DE SORTEO
+========================== -->
+
+<div id="zonaSorteo">
+
+    <div class="slot-container">
+        <div class="reel" id="reel"></div>
+    </div>
+
+    <div id="ganadora"></div>
+
+    <button id="btn">
+        🎰 SORTEAR
+    </button>
+
+    <button
+        id="btnContinuar"
+        style="display:none;">
+        ▶ CONTINUAR
+    </button>
+
+</div>
+
+
+<!-- ==========================
+     PANTALLA DE ANÁLISIS
+========================== -->
+
+<div
+    id="pantallaAnalisis"
+    style="display:none;">
+
+    <h3 id="autorCancion"></h3>
+
+    <!-- CONTROL DE VOLUMEN -->
+
+    <div id="controlVolumen">
+
+        <label for="volumenFondo">
+            🔊 Música de fondo
+        </label>
+
+        <input
+            type="range"
+            id="volumenFondo"
+            min="0"
+            max="30"
+            value="5">
+
+        <span id="valorVolumen">
+            5%
+        </span>
+
+    </div>
+
+
+    <!-- LETRA -->
+
+    <div id="textoCancion"></div>
+
+
+    <!-- VOLVER -->
+
+    <button id="btnVolver">
+        ↩ VOLVER AL SORTEO
+    </button>
+
+</div>
+
+
+<script src="datos/canciones.js"></script>
+
+<script>
+
+// ======================================
+// CANCIONES
+// ======================================
+
+let items =
+[...todasLasCanciones];
+
+
+// ======================================
+// ELEMENTOS
+// ======================================
+
+const reel =
+document.getElementById("reel");
+
+const btn =
+document.getElementById("btn");
+
+const btnContinuar =
+document.getElementById("btnContinuar");
+
+const btnVolver =
+document.getElementById("btnVolver");
+
+const cartelGanadora =
+document.getElementById("ganadora");
+
+const pantallaAnalisis =
+document.getElementById("pantallaAnalisis");
+
+const volumenFondo =
+document.getElementById("volumenFondo");
+
+const valorVolumen =
+document.getElementById("valorVolumen");
+
+const tituloPagina =
+document.getElementById("tituloPagina");
+
+// ======================================
+// REPRODUCTOR
+// ======================================
+
+const reproductor =
+new Audio();
+
+const itemHeight = 140;
+
+
+// ======================================
+// VARIABLES
+// ======================================
+
+let pendingDelete = null;
+
+let ultimoVisible =
+items.length > 0
+? items[0].titulo
+: "";
+
+let estado = "sorteo";
+
+let cancionActual = null;
+
+
+// ======================================
+// CONSTRUIR RUEDA
+// ======================================
+
+function buildReel(){
+
+    reel.innerHTML = "";
+
+    if(items.length === 0)
+        return;
+
+
+    const repeats = 30;
+
+    const extended = [];
+
+
+    for(
+        let i = 0;
+        i < repeats;
+        i++
+    ){
+
+        extended.push(...items);
+
+    }
+
+
+    extended.forEach(item => {
+
+        const div =
+        document.createElement("div");
+
+        div.className =
+        "symbol";
+
+        div.textContent =
+        "🎵 " + item.titulo;
+
+        reel.appendChild(div);
+
+    });
+
+
+    let indexVisible =
+    items.findIndex(
+        item =>
+        item.titulo === ultimoVisible
+    );
+
+
+    if(indexVisible === -1){
+
+        indexVisible = 0;
+
+        ultimoVisible =
+        items[0].titulo;
+
+    }
+
+
+    const middle =
+    Math.floor(repeats / 2)
+    * items.length;
+
+
+    const startIndex =
+    middle + indexVisible;
+
+
+    reel.style.transition =
+    "none";
+
+
+    reel.style.transform =
+    `translateY(-${
+        startIndex * itemHeight
+    }px)`;
+
+
+    return startIndex;
+
+}
+
+
+// ======================================
+// SORTEAR
+// ======================================
+
+function sortear(){
+
+
+    // ----------------------------------
+    // ELIMINAR GANADORA ANTERIOR
+    // ----------------------------------
+
+    if(pendingDelete){
+
+        const idx =
+        items.findIndex(
+            item =>
+            item.titulo ===
+            pendingDelete.titulo
+        );
+
+
+        if(idx !== -1){
+
+            items.splice(idx,1);
+
+        }
+
+
+        pendingDelete = null;
+
+    }
+
+
+    // ----------------------------------
+    // FIN DEL SORTEO
+    // ----------------------------------
+
+    if(items.length === 0){
+
+        cartelGanadora.textContent =
+        "🎉 FIN DEL SORTEO";
+
+        btn.disabled = true;
+
+        return;
+
+    }
+
+
+    btn.disabled = true;
+
+    cartelGanadora.textContent = "";
+
+
+    // ----------------------------------
+    // POSICIÓN INICIAL
+    // ----------------------------------
+
+    const startIndex =
+    buildReel();
+
+
+    // ----------------------------------
+    // ELEGIR GANADORA
+    // ----------------------------------
+
+    const randomIndex =
+    Math.floor(
+        Math.random() *
+        items.length
+    );
+
+
+    const winner =
+    items[randomIndex];
+
+
+    cancionActual =
+    winner;
+
+
+    // ----------------------------------
+    // VELOCIDAD
+    // ----------------------------------
+
+    const loops =
+    6 +
+    Math.floor(
+        Math.random() * 4
+    );
+
+
+    const duration =
+    6000 +
+    Math.random() * 3000;
+
+
+    // ----------------------------------
+    // POSICIÓN FINAL
+    // ----------------------------------
+
+    const targetIndex =
+
+    startIndex +
+
+    (loops * items.length) +
+
+    randomIndex;
+
+
+    reel.style.transition =
+
+    `transform ${
+        duration / 1000
+    }s cubic-bezier(.08,.8,.15,1)`;
+
+
+    reel.style.transform =
+
+    `translateY(
+        -${targetIndex * itemHeight}px
+    )`;
+
+
+    // ----------------------------------
+    // FINAL DE LA ANIMACIÓN
+    // ----------------------------------
+
+    setTimeout(() => {
+
+
+        const symbols =
+        document.querySelectorAll(
+            ".symbol"
+        );
+
+
+        symbols.forEach(
+            s =>
+            s.classList.remove("win")
+        );
+
+
+        if(symbols[targetIndex]){
+
+            symbols[targetIndex]
+            .classList.add("win");
+
+        }
+
+
+        // --------------------------------
+        // MOSTRAR AUTOR
+        // --------------------------------
+
+        cartelGanadora.textContent =
+        winner.autor || "";
+
+
+        // --------------------------------
+        // PREPARAR AUDIO
+        // --------------------------------
+
+        reproductor.pause();
+
+        reproductor.src =
+        winner.audio;
+
+        reproductor.currentTime = 0;
+
+        reproductor.volume = 0.25;
+
+
+        reproductor.play()
+        .catch(() => {});
+
+
+        // --------------------------------
+        // GUARDAR ESTADO
+        // --------------------------------
+
+        ultimoVisible =
+        winner.titulo;
+
+
+        pendingDelete =
+        winner;
+
+
+        estado =
+        "escuchando";
+
+
+        // --------------------------------
+        // CAMBIAR BOTONES
+        // --------------------------------
+
+        btn.style.display =
+        "none";
+
+        btnContinuar.style.display =
+        "inline-block";
+
+        btnContinuar.disabled =
+        false;
+
+
+    }, duration);
+
+}
+
+
+// ======================================
+// CONTINUAR
+// ======================================
+
+function continuar(){
+
+    btnContinuar.disabled = true;
+
+
+    fadeOutToFive(() => {
+
+        mostrarAnalisis();
+
+    });
+
+}
+
+
+// ======================================
+// FADE A 5%
+// ======================================
+
+function fadeOutToFive(callback){
+
+    const volumenInicial =
+    reproductor.volume;
+
+
+    const volumenFinal =
+    0.05;
+
+
+    const pasos =
+    25;
+
+
+    let paso = 0;
+
+
+    const timer =
+    setInterval(() => {
+
+
+        paso++;
+
+
+        reproductor.volume =
+
+        volumenInicial -
+
+        (
+            (volumenInicial - volumenFinal)
+            *
+            (paso / pasos)
+        );
+
+
+        if(paso >= pasos){
+
+            clearInterval(timer);
+
+
+            reproductor.volume =
+            volumenFinal;
+
+
+            callback();
+
+        }
+
+
+    }, 100);
+
+}
+
+
+// ======================================
+// MOSTRAR ANÁLISIS
+// ======================================
+
+function mostrarAnalisis(){
+
+    estado =
+    "analisis";
+
+
+    // ----------------------------------
+    // OCULTAR TODA LA ZONA DE SORTEO
+    // ----------------------------------
+
+    document
+    .getElementById("zonaSorteo")
+    .style.display =
+    "none";
+
+
+    // ----------------------------------
+    // OCULTAR BOTONES DE SORTEO
+    // ----------------------------------
+
+    btn.style.display =
+    "none";
+
+    btnContinuar.style.display =
+    "none";
+
+
+    // ----------------------------------
+    // MOSTRAR ANÁLISIS
+    // ----------------------------------
+
+    pantallaAnalisis.style.display =
+    "block";
+
+
+    tituloPagina.textContent =
+    "🎵 " + cancionActual.titulo;
+
+    document
+    .getElementById("autorCancion")
+    .textContent =
+    cancionActual.autor || "";
+
+
+    document
+    .getElementById("textoCancion")
+    .style.whiteSpace =
+    "pre-wrap";
+
+
+    document
+    .getElementById("textoCancion")
+    .textContent =
+    cancionActual.letra || "";
+
+
+    // ----------------------------------
+    // VOLUMEN INICIAL: 5%
+    // ----------------------------------
+
+    reproductor.volume =
+    0.05;
+
+    volumenFondo.value =
+    5;
+
+    valorVolumen.textContent =
+    "5%";
+
+}
+
+
+// ======================================
+// CONTROL DE VOLUMEN
+// ======================================
+
+volumenFondo.addEventListener(
+    "input",
+    () => {
+
+        const valor =
+        Number(volumenFondo.value);
+
+
+        reproductor.volume =
+        valor / 100;
+
+
+        valorVolumen.textContent =
+        valor + "%";
+
+    }
+);
+
+
+// ======================================
+// VOLVER AL SORTEO
+// ======================================
+
+function volverAlSorteo(){
+
+    btnVolver.disabled =
+    true;
+
+
+    // ----------------------------------
+    // FADE HASTA 0
+    // ----------------------------------
+
+    fadeOutToZero(() => {
+
+
+        // ------------------------------
+        // OCULTAR ANÁLISIS
+        // ------------------------------
+
+        pantallaAnalisis.style.display =
+        "none";
+
+        tituloPagina.textContent =
+        "🎵 SORTEO DE CANCIONES";
+
+
+        // ------------------------------
+        // MOSTRAR SORTEO
+        // ------------------------------
+
+        document
+        .getElementById("zonaSorteo")
+        .style.display =
+        "flex";
+
+
+        cartelGanadora.style.display =
+        "block";
+
+
+        btn.style.display =
+        "inline-block";
+
+
+        btn.disabled =
+        false;
+
+
+        btnContinuar.style.display =
+        "none";
+
+
+        btnContinuar.disabled =
+        false;
+
+
+        btnVolver.disabled =
+        false;
+
+
+        // ------------------------------
+        // RESTAURAR VOLUMEN
+        // ------------------------------
+
+        reproductor.volume =
+        0.25;
+
+
+        volumenFondo.value =
+        5;
+
+
+        valorVolumen.textContent =
+        "5%";
+
+
+        estado =
+        "sorteo";
+
+    });
+
+}
+
+
+// ======================================
+// FADE HASTA 0
+// ======================================
+
+function fadeOutToZero(callback){
+
+    const volumenInicial =
+    reproductor.volume;
+
+
+    const pasos =
+    25;
+
+
+    let paso = 0;
+
+
+    const timer =
+    setInterval(() => {
+
+
+        paso++;
+
+
+        reproductor.volume =
+
+        volumenInicial *
+        (1 - paso / pasos);
+
+
+        if(paso >= pasos){
+
+            clearInterval(timer);
+
+
+            reproductor.volume =
+            0;
+
+
+            reproductor.pause();
+
+
+            reproductor.currentTime =
+            0;
+
+
+            callback();
+
+        }
+
+
+    }, 150);
+
+}
+
+
+// ======================================
+// INICIALIZAR
+// ======================================
+
+buildReel();
+
+
+// ======================================
+// EVENTOS
+// ======================================
+
+btn.addEventListener(
+    "click",
+    sortear
+);
+
+
+btnContinuar.addEventListener(
+    "click",
+    continuar
+);
+
+
+btnVolver.addEventListener(
+    "click",
+    volverAlSorteo
+);
+
+</script>
+
+</body>
+</html>
